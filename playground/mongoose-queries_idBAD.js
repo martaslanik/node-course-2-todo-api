@@ -1,7 +1,7 @@
 const {mongoose} = require('./../server/db/mongoose');
 const {Todo} = require('./../server/models/todo');
 
-var id = '5a96c9e24a42ff861bab6908';
+var id = '5a8dba621eac8928469be966';
 var text = 'First test todo';
 
 Todo.find({
