@@ -1,13 +1,16 @@
 const expect = require('expect');
 const request = require('supertest');
+const {ObjectID} = require('mongodb');
 
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
 // make an array of dummy todos to populate db
 const todos = [{
+  _id: new ObjectID(),
   text:'First test todo'
 }, {
+  _id: new ObjectID(),
   text: 'Second test todo'
 }];
 
@@ -71,4 +74,34 @@ describe('GET /todos', () => {
       })
      .end(done);
   });
+});
+
+describe('GET /todos/:id', () => {
+  it('should return todo doc', (done) => {
+    request(app)
+      .get(`/todos/${todos[0]._id.toHexString()}`)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.todo.text).toBe(todos[0].text);
+    })
+    .end(done);
+  });
+
+  it('should return 404 if todo not found', (done) => {
+    var hexID = new ObjectID().toHexString();
+// i don't understand how this is a wrong id, i think because the
+// above line is a new random id and not from todo
+    request(app)
+      .get(`/todos/${hexID}`)
+      .expect(404)
+      .end(done);
+    });
+
+    it('should return 404 for non-object ids', (done) => {
+      request(app)
+        .get(`/todos/123abc`)
+        .expect(404)
+        .end(done);
+      });
+
 });
